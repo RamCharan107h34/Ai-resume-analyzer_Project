@@ -11,7 +11,7 @@ export const userApp = express.Router();
 
 //  Upload + Score Resume 
 // POST /api/user/resume
-userApp.post("/resume", verifyToken("USER"), uploadResume.single("resume"), async (req, res, next) => {
+userApp.post("/resume", verifyToken("USER","ADMIN"), uploadResume.single("resume"), async (req, res, next) => {
     // check file exists
     if (!req.file) {
         const err = new Error("No file uploaded");
@@ -75,7 +75,7 @@ userApp.post("/resume", verifyToken("USER"), uploadResume.single("resume"), asyn
 
 //  Get Resume History 
 // GET /api/user/resumes
-userApp.get("/resumes", verifyToken("USER"), async (req, res, next) => {
+userApp.get("/resumes", verifyToken("USER","ADMIN"), async (req, res, next) => {
     const resumes = await ResumeModel.find({ userId: req.user.id })
         .select("-extractedText")   // too heavy to send in list
         .sort({ createdAt: -1 })    // latest first
@@ -89,7 +89,7 @@ userApp.get("/resumes", verifyToken("USER"), async (req, res, next) => {
 
 //  Get Single Resume Result 
 // GET /api/user/resumes/:id
-userApp.get("/resumes/:id", verifyToken("USER"), async (req, res, next) => {
+userApp.get("/resumes/:id", verifyToken("USER","ADMIN"), async (req, res, next) => {
     const resume = await ResumeModel.findOne({
         _id:    req.params.id,
         userId: req.user.id,        // make sure it belongs to this user
@@ -109,7 +109,7 @@ userApp.get("/resumes/:id", verifyToken("USER"), async (req, res, next) => {
 
 // Delete Resume
 // DELETE /api/user/resumes/:id
-userApp.delete("/resumes/:id", verifyToken("USER"), async (req, res, next) => {
+userApp.delete("/resumes/:id", verifyToken("USER","ADMIN"), async (req, res, next) => {
   const resume = await ResumeModel.findOne({
     _id:    req.params.id,
     userId: req.user.id,
