@@ -9,7 +9,7 @@ export const adminApp = express.Router();
 //  Get All Users 
 // GET /admin/users
 adminApp.get("/users", verifyToken("ADMIN"), async (req, res, next) => {
-  const users = await UserModel.find()
+  const users = await UserModel.find({ role: { $ne: "ADMIN" } }) // ← only non-admin users
     .select("-password")
     .sort({ createdAt: -1 });
 

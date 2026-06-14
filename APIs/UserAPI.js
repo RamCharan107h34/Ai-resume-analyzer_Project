@@ -132,3 +132,44 @@ userApp.delete("/resumes/:id", verifyToken("USER","ADMIN"), async (req, res, nex
 
   res.status(200).json({ message: "Resume deleted successfully" });
 });
+
+// rescore
+userApp.post("/resumes/:id/rescore", verifyToken("USER","ADMIN"), async (req, res, next) => {
+  const { jobDescription = "" } = req.body;
+
+  const resume = await ResumeModel.findOne({
+    _id:    req.params.id,
+    userId: req.user.id,
+  });
+
+  if (!resume) {
+    const err = new Error("Resume not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  // re-use already extracted text — no file needed
+  const scores = await scoreResume(resume.extractedText, jobDescription);
+
+  // update existing document
+  resume.jobDescription = jobDescription;
+  resume.overallScore   = scores.overallScore;
+  resume.atsScore       = scores.atsScore;
+  resume.matchScore     = scores.matchScore;
+  resume.feedback       = scores.feedback;
+  await resume.save();
+
+  res.status(200).json({
+    message: "Resume re-scored successfully",
+    data: {
+      resumeId:     resume._id,
+      fileName:     resume.fileName,
+      fileUrl:      resume.fileUrl,
+      overallScore: resume.overallScore,
+      atsScore:     resume.atsScore,
+      matchScore:   resume.matchScore,
+      feedback:     resume.feedback,
+      status:       resume.status,
+    },
+  });
+});
