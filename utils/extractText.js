@@ -1,7 +1,7 @@
 import mammoth from "mammoth";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 
-// ── Extract text from PDF buffer ─────────────────────────────
+//  Extract text from PDF buffer 
 const extractFromPDF = async (buffer) => {
   const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(buffer) });
   const pdf = await loadingTask.promise;
@@ -19,13 +19,13 @@ const extractFromPDF = async (buffer) => {
   return fullText;
 };
 
-// ── Extract text from DOCX buffer ────────────────────────────
+//  Extract text from DOCX buffer 
 const extractFromDOCX = async (buffer) => {
   const result = await mammoth.extractRawText({ buffer });
   return result.value;
 };
 
-// ── Main extract function ─────────────────────────────────────
+//  Main extract function 
 export const extractText = async (buffer, mimetype) => {
   const extractors = {
     "application/pdf": extractFromPDF,

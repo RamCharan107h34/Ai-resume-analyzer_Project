@@ -6,7 +6,7 @@ import { ResumeModel } from "../models/ResumeModel.js";
 export const adminApp = express.Router();
 
 
-// ── Get All Users ────────────────────────────────────────────
+//  Get All Users 
 // GET /admin/users
 adminApp.get("/users", verifyToken("ADMIN"), async (req, res, next) => {
   const users = await UserModel.find()
@@ -20,7 +20,7 @@ adminApp.get("/users", verifyToken("ADMIN"), async (req, res, next) => {
   });
 });
 
-// ── Get Single User ──────────────────────────────────────────
+//  Get Single User 
 // GET /admin/users/:id
 adminApp.get("/users/:id", verifyToken("ADMIN"), async (req, res, next) => {
   const user = await UserModel.findById(req.params.id).select("-password");
@@ -37,7 +37,7 @@ adminApp.get("/users/:id", verifyToken("ADMIN"), async (req, res, next) => {
   });
 });
 
-// ── Toggle User Active Status ────────────────────────────────
+//  Toggle User Active Status 
 // PUT /admin/users/:id/toggle
 adminApp.put("/users/:id/toggle", verifyToken("ADMIN"), async (req, res, next) => {
   const user = await UserModel.findById(req.params.id);
@@ -68,7 +68,7 @@ adminApp.put("/users/:id/toggle", verifyToken("ADMIN"), async (req, res, next) =
   });
 });
 
-// ── Delete User ──────────────────────────────────────────────
+//  Delete User 
 // DELETE /admin/users/:id
 adminApp.delete("/users/:id", verifyToken("ADMIN"), async (req, res, next) => {
   const user = await UserModel.findById(req.params.id);
@@ -95,7 +95,7 @@ adminApp.delete("/users/:id", verifyToken("ADMIN"), async (req, res, next) => {
   });
 });
 
-// ── Get All Resumes ──────────────────────────────────────────
+//  Get All Resumes 
 // GET /admin/resumes
 adminApp.get("/resumes", verifyToken("ADMIN"), async (req, res, next) => {
   const resumes = await ResumeModel.find()
@@ -110,7 +110,7 @@ adminApp.get("/resumes", verifyToken("ADMIN"), async (req, res, next) => {
   });
 });
 
-// ── Get Single Resume ────────────────────────────────────────
+//  Get Single Resume 
 // GET /admin/resumes/:id
 adminApp.get("/resumes/:id", verifyToken("ADMIN"), async (req, res, next) => {
   const resume = await ResumeModel.findById(req.params.id)
@@ -129,7 +129,7 @@ adminApp.get("/resumes/:id", verifyToken("ADMIN"), async (req, res, next) => {
   });
 });
 
-// ── Delete Resume ─────────────────────────────────────────────
+//  Delete Resume 
 // DELETE /admin/resumes/:id
 adminApp.delete("/resumes/:id", verifyToken("ADMIN"), async (req, res, next) => {
   const resume = await ResumeModel.findById(req.params.id);
@@ -145,7 +145,7 @@ adminApp.delete("/resumes/:id", verifyToken("ADMIN"), async (req, res, next) => 
   res.status(200).json({ message: "Resume deleted successfully" });
 });
 
-// ── Dashboard Stats ───────────────────────────────────────────
+//  Dashboard Stats 
 // GET /admin/stats
 adminApp.get("/stats", verifyToken("ADMIN"), async (req, res, next) => {
   const [

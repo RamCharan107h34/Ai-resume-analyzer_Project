@@ -9,7 +9,7 @@ import { ResumeModel } from "../models/ResumeModel.js";
 
 export const userApp = express.Router();
 
-// ── Upload + Score Resume ────────────────────────────────────
+//  Upload + Score Resume 
 // POST /api/user/resume
 userApp.post("/resume", verifyToken("USER"), uploadResume.single("resume"), async (req, res, next) => {
     // check file exists
@@ -73,7 +73,7 @@ userApp.post("/resume", verifyToken("USER"), uploadResume.single("resume"), asyn
     });
 });
 
-// ── Get Resume History ───────────────────────────────────────
+//  Get Resume History 
 // GET /api/user/resumes
 userApp.get("/resumes", verifyToken("USER"), async (req, res, next) => {
     const resumes = await ResumeModel.find({ userId: req.user.id })
@@ -87,7 +87,7 @@ userApp.get("/resumes", verifyToken("USER"), async (req, res, next) => {
     });
 });
 
-// ── Get Single Resume Result ─────────────────────────────────
+//  Get Single Resume Result 
 // GET /api/user/resumes/:id
 userApp.get("/resumes/:id", verifyToken("USER"), async (req, res, next) => {
     const resume = await ResumeModel.findOne({

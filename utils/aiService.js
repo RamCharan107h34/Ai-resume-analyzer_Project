@@ -52,7 +52,7 @@ Rules:
 - do not use apostrophes or single quotes inside string values`;
 };
 
-// ── Clean and extract JSON from response ─────────────────────
+//  Clean and extract JSON from response 
 const extractJSON = (text) => {
   const start = text.indexOf("{");
   const end   = text.lastIndexOf("}");
