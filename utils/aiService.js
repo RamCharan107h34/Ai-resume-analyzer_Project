@@ -6,50 +6,41 @@ const cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
 
 // Prompt Builder
 const buildPrompt = (resumeText, jobDescription = "") => {
-  const jobDescriptionSection = jobDescription
-    ? `JOB DESCRIPTION:\n${jobDescription}\n\n`
-    : "";
-
-  return `You are an expert ATS (Applicant Tracking System) and professional resume coach.
-Analyze the resume below and return a detailed JSON evaluation.
-
-${jobDescriptionSection}RESUME:
-${resumeText}
-
-IMPORTANT: Return ONLY a raw JSON object. No markdown, no backticks, no explanation, no extra text before or after.
-
-Use exactly this structure:
-{
-  "overallScore": 75,
-  "atsScore": 80,
-  "matchScore": 50,
-  "feedback": {
-    "strengths": ["strength one", "strength two", "strength three"],
-    "weaknesses": ["weakness one", "weakness two", "weakness three"],
-    "suggestions": ["suggestion one", "suggestion two", "suggestion three"],
-    "missingKeywords": [],
-    "matchedKeywords": [],
-    "sectionScores": {
-      "contactInfo": 80,
-      "summary": 60,
-      "experience": 75,
-      "education": 70,
-      "skills": 65
+  const jobSection = jobDescription
+    ? `JOB DESCRIPTION: ${jobDescription}`: "";
+    return ` You are a strict ATS recruiter.
+    Analyze the resume critically and do not inflate scores.
+    Only exceptional resumes should score above 90.
+    Average resumes should score between 50 and 80.
+    ${jobSection}RESUME: ${resumeText}
+    Rules:
+    - overallScore: overall resume quality (0-100)
+    - atsScore: ATS friendliness (0-100)
+    - matchScore: job match score (0-100)
+    - If no job description is provided, set matchScore to 50.
+    - Deduct points for missing sections, weak content, poor formatting, and lack of achievements.
+    - Reward quantified achievements, projects, skills, internships, and relevant experience.
+    - Return only valid JSON.
+    {
+      "overallScore": number,
+      "atsScore": number,
+      "matchScore": number,
+      "feedback": {
+      "strengths": [],
+      "weaknesses": [],
+      "suggestions": [],
+      "missingKeywords": [],
+      "matchedKeywords": [],
+      "sectionScores": {
+        "contactInfo": number,
+        "summary": number,
+        "experience": number,
+        "education": number,
+        "skills": number
+      }
     }
   }
-}
-
-Rules:
-- overallScore: overall resume quality as a number 0 to 100
-- atsScore: ATS friendliness as a number 0 to 100
-- matchScore: match with job description as a number 0 to 100, return 50 if no JD provided
-- strengths: array of 3 to 5 strings, each string must be complete and not contain quotes
-- weaknesses: array of 3 to 5 strings, each string must be complete and not contain quotes
-- suggestions: array of 4 to 6 strings, each string must be complete and not contain quotes
-- missingKeywords: array of strings, empty array if no JD provided
-- matchedKeywords: array of strings, empty array if no JD provided
-- all scores must be plain numbers with no quotes
-- do not use apostrophes or single quotes inside string values`;
+}`;
 };
 
 //  Clean and extract JSON from response 
@@ -82,7 +73,7 @@ export const scoreResume = async (resumeText, jobDescription = "") => {
   const response = await cohere.chat({
     model: "command-a-03-2025",
     message: prompt,
-    temperature: 0.1,   // very low = most consistent structured output
+    temperature: 0.3,
   });
 
   return extractJSON(response.text);
