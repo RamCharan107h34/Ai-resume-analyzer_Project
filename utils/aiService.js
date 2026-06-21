@@ -9,60 +9,64 @@ const cohere = new CohereClient({
 // Prompt Builder
 const buildPrompt = (resumeText, jobDescription = "") => {
   const jobSection = jobDescription
-    ? `JOB DESCRIPTION:${jobDescription}`: "";
-    return ` You are an ATS recruiter and resume reviewer. Analyze the resume critically.
-    Overall Score:
-    - Measures overall resume quality.
-    - Consider projects, education, skills, internships, and achievements.
-    - Students should not be heavily penalized for lack of work experience.
-    ATS Score:
-    - Measures the likelihood of passing an ATS screening.
-    - Deduct points for:
-    - Missing experience
-    - Missing certifications
-    - Missing keywords
-    - Missing summary
-    - Weak skills section
-    - Lack of measurable achievements
-    Scoring Guide:
-    90-100: Exceptional resume.
-    80-89: Strong resume.
-    70-79: Good resume.
-    60-69: Average resume.
-    40-59: Weak resume.
-    0-39: Poor resume.
-    Only exceptional resumes should score above 90.
-    ${jobSection}RESUME: ${resumeText}
-    Rules:
-    - overallScore: 0-100
-    - atsScore: 0-100
-    - matchScore: 0-100
-    - If no job description is provided, set matchScore to 50.
-    - Return only valid JSON.
-    - Do not include markdown or explanations.
-    - Response must start with { and end with }.
-    {
-      "overallScore": 0,
-      "atsScore": 0,
-      "matchScore": 0,
-      "feedback": {
-        "strengths": ["string"],
-        "weaknesses": ["string"],
-        "suggestions": ["string"],
-        "missingKeywords": [],
-        "matchedKeywords": [],
-        "sectionScores": {
-          "contactInfo": 0,
-          "summary": 0,
-          "experience": 0,
-          "education": 0,
-          "skills": 0
-        }
-      }
+    ? `JOB DESCRIPTION:
+${jobDescription}
+
+`
+    : "";
+
+  return `
+You are a strict ATS recruiter.
+
+Evaluate the resume realistically.
+
+Scoring Rules:
+
+- 90-100: Outstanding professional resume.
+- 80-89: Strong resume with minor improvements.
+- 70-79: Good resume.
+- 60-69: Average resume.
+- 40-59: Weak resume.
+- 0-39: Poor resume.
+
+Important:
+- Freshers without internships should lose points.
+- Missing certifications should reduce ATS score.
+- Missing measurable achievements should reduce scores.
+- Lack of experience should significantly reduce ATS score.
+- Projects are valuable but should not fully replace work experience.
+- Only exceptional resumes should score above 90.
+- Most student resumes should score between 45 and 70.
+- Experienced resumes with measurable achievements should score 75 to 90.
+
+${jobSection}
+
+RESUME:
+${resumeText}
+
+Return ONLY valid JSON.
+
+{
+  "overallScore": 0,
+  "atsScore": 0,
+  "matchScore": 50,
+  "feedback": {
+    "strengths": ["string"],
+    "weaknesses": ["string"],
+    "suggestions": ["string"],
+    "missingKeywords": [],
+    "matchedKeywords": [],
+    "sectionScores": {
+      "contactInfo": 0,
+      "summary": 0,
+      "experience": 0,
+      "education": 0,
+      "skills": 0
     }
+  }
 }
+`;
 };
-`};
 
 // Extract JSON safely
 const extractJSON = (text) => {
